@@ -1,0 +1,1 @@
+psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'task_manager'" | grep -q 1 || psql -U postgres -c "CREATE DATABASE task_manager"

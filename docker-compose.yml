@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  dev:
+    container_name: basic_task_list
+    image: basic-task-list:1.0.0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: npm run start:dev
+    ports:
+      - 3001:3001
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  db:
+    image: postgis/postgis:13-3.1-alpine
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass2021
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - task_manager:/var/lib/postgresql/data
+      - ./seed:/docker-entrypoint-initdb.d/
+
+  adminer:
+    container_name: task_adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  task_manager:
+    driver: local
+
